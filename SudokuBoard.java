@@ -117,4 +117,36 @@ public class SudokuBoard {
         return mini;
     }
 
- }   
+    public boolean isSolved() {
+        if (!isValid()) return false;
+
+        Map<Integer, Integer> counts = new HashMap<>();
+        for (int[] row : board) {
+            for (int val : row) {
+                if (val != 0) {
+                    counts.put(val, counts.getOrDefault(val, 0) + 1);
+                }
+            }
+        }
+
+        for (int i = 1; i <= 9; i++) {
+            if (counts.getOrDefault(i, 0) != 9) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+/*
+Checking empty board...passed.
+ Checking incomplete, valid board...passed.
+ Checking complete, valid board...passed.
+ Checking dirty data board...passed.
+ Checking row violating board...passed.
+ Checking col violating board...passed.
+ Checking row&col violating board...passed.
+ Checking mini-square violating board...passed.
+ **** HORRAY: ALL TESTS PASSED ****
+*/
