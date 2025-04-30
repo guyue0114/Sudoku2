@@ -1,152 +1,64 @@
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
 public class SudokuBoard {
-    private int[][] board;
+    private char[][] board;
+    
 
     public SudokuBoard(String filename) {
-        board = new int[9][9];
+        board = new char[9][9];
         try {
-            Scanner file = new Scanner(new File(filename));
-            for (int r = 0; r < 9; r++) {
-                String line = file.nextLine();
-                for (int c = 0; c < 9; c++) {
-                    char ch = line.charAt(c);
-                    if (ch == '.' || ch == '0') {
-                        board[r][c] = 0;
-                    } else {
-                        board[r][c] = Character.getNumericValue(ch);
-                    }
+            Scanner scanner = new Scanner(new File(filename));
+            int row = 0;
+            while (scanner.hasNextLine() && row < 9) {
+                String line = scanner.nextLine();
+                for (int col = 0; col < 9; col++) {
+                    board[row][col] = line.charAt(col);
                 }
+                row++;
             }
+            scanner.close();
         } catch (FileNotFoundException e) {
-            System.out.println("Cannot load: " + filename);
-        } catch (Exception e) {
-            System.out.println(filename + " does not meet format expectations.");
+            System.out.println("File not found: " + filename);
         }
     }
 
+   
     public String toString() {
-        StringBuilder build = new StringBuilder(" -----------------\n");
-        for (int r = 0; r < 9; r++) {
-            build.append("|\t");
-            for (int c = 0; c < 9; c++) {
-                build.append(board[r][c] == 0 ? "." : board[r][c]).append("|\t");
+        StringBuilder sb = new StringBuilder();
+        for (int row = 0; row < board.length; row++) {
+            if (row % 3 == 0 && row != 0) {
+                sb.append("------+-------+------\n");
             }
-            build.append("|\n");
-        }
-        build.append(" -----------------\n");
-        return build.toString();
-    }
-
-    public boolean isValid() {
-        return isValidData() && rowsValid() && columnsValid() && miniSquaresValid();
-    }
-
-    private boolean isValidData() {
-        for (int[] row : board) {
-            for (int val : row) {
-                if (val != 0 && (val < 1 || val > 9)) {
-                    return false;
+            for (int col = 0; col < board[row].length; col++) {
+                if (col % 3 == 0 && col != 0) {
+                    sb.append("| ");
                 }
+                sb.append(board[row][col]).append(" ");
             }
+            sb.append("\n");
         }
-        return true;
-    }
-
-    private boolean rowsValid() {
-        for (int r = 0; r < 9; r++) {
-            Set<Integer> seen = new HashSet<>();
-            for (int c = 0; c < 9; c++) {
-                int val = board[r][c];
-                if (val != 0) {
-                    if (seen.contains(val)) {
-                        return false;
-                    } else {
-                        seen.add(val);
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    private boolean columnsValid() {
-        for (int c = 0; c < 9; c++) {
-            Set<Integer> seen = new HashSet<>();
-            for (int r = 0; r < 9; r++) {
-                int val = board[r][c];
-                if (val != 0) {
-                    if (seen.contains(val)) {
-                        return false;
-                    } else {
-                        seen.add(val);
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    private boolean miniSquaresValid() {
-        for (int i = 1; i <= 9; i++) {
-            int[][] mini = miniSquare(i);
-            Set<Integer> seen = new HashSet<>();
-            for (int[] row : mini) {
-                for (int val : row) {
-                    if (val != 0) {
-                        if (seen.contains(val)) {
-                            return false;
-                        } else {
-                            seen.add(val);
-                        }
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    private int[][] miniSquare(int spot) {
-        int[][] mini = new int[3][3];
-        for (int r = 0; r < 3; r++) {
-            for (int c = 0; c < 3; c++) {
-                mini[r][c] = board[(spot - 1) / 3 * 3 + r][(spot - 1) % 3 * 3 + c];
-            }
-        }
-        return mini;
-    }
-
-    public boolean isSolved() {
-        if (!isValid()) return false;
-
-        Map<Integer, Integer> counts = new HashMap<>();
-        for (int[] row : board) {
-            for (int val : row) {
-                if (val != 0) {
-                    counts.put(val, counts.getOrDefault(val, 0) + 1);
-                }
-            }
-        }
-
-        for (int i = 1; i <= 9; i++) {
-            if (counts.getOrDefault(i, 0) != 9) {
-                return false;
-            }
-        }
-
-        return true;
+        return sb.toString();
     }
 }
 
+
+
 /*
-Checking empty board...passed.
- Checking incomplete, valid board...passed.
- Checking complete, valid board...passed.
- Checking dirty data board...passed.
- Checking row violating board...passed.
- Checking col violating board...passed.
- Checking row&col violating board...passed.
- Checking mini-square violating board...passed.
- **** HORRAY: ALL TESTS PASSED ****
+# PROGRAM OUTPUT
+
+2 . . | 1 . 5 | . . 3 
+. 5 4 | . . . | 7 1 . 
+. 1 . | 2 . 3 | . 8 . 
+------+-------+------
+6 . 2 | 8 . 7 | 3 . 4 
+. . . | . . . | . . . 
+1 . 5 | 3 . 9 | 8 . 6 
+------+-------+------
+. 2 . | 7 . 1 | . 6 . 
+. 8 1 | . . . | 2 4 . 
+7 . . | 4 . 2 | . . 1 
 */
+
+
+
