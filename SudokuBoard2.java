@@ -122,18 +122,34 @@ public class SudokuBoard2 {
     }
 
     public boolean isSolved() {
-        if (!isValid()) return false;
+      if (!isValid()) {
+         return false;
+      }
 
-        for (int r = 0; r < 9; r++) {
-            for (int c = 0; c < 9; c++) {
-                if (board[r][c] == 0) {
-                    return false;
-                }
+      Map<Character, Integer> counts = new HashMap<>();
+      for (char c = '1'; c <= '9'; c++) {
+         counts.put(c, 0);
+      }
+
+      for (char[] row : board) {
+         for (char val : row) {
+            if (val != '0') {
+               if (val < '1' || val > '9') {
+                  return false;
+               }
+               counts.put(val, counts.get(val) + 1);
             }
-        }
+         }
+      }
 
-        return true;
-    }
+      for (int count : counts.values()) {
+         if (count != 9) {
+            return false;
+         }
+      }
+
+      return true;
+   }
 }
 
 
